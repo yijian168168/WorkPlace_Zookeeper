@@ -5,7 +5,6 @@ import org.apache.zookeeper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ public class ZookeeperNode {
 
     ZooKeeper zk = null;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() throws Exception {
         zk = new ZooKeeper(appProperties.getIp(), Integer.parseInt(appProperties.getTimeout()), new Watcher() {
             // 监控所有被触发的事件

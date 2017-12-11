@@ -2,6 +2,8 @@ package com.zookeeper.onenode.junit;
 
 import org.apache.zookeeper.*;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * Zookeeper 基础功能测试
  * Created by zhangqingrong on 2016/5/3.
@@ -10,16 +12,24 @@ public class ZookeeperTest {
 
     public static void main(String[] args) {
 
-        String ip = "192.168.223.129:6003";
+        final CountDownLatch connectedSignal = new CountDownLatch(1);
+
+        String ip = "192.168.1.116:12181";
         int timeout = 40000;
         try {
             ZooKeeper zk = new ZooKeeper(ip,
                     timeout, new Watcher() {
-                // 监控所有被触发的事件
+                @Override
                 public void process(WatchedEvent event) {
                     System.out.println("已经触发了" + event.getType() + "事件！");
+                    if (event.getState() == Event.KeeperState.SyncConnected) {
+                        connectedSignal.countDown(); // 倒数-1
+                    }
                 }
             });
+
+            // 等待连接完成
+//            connectedSignal.await();
 
             // 创建一个目录节点
             /**
